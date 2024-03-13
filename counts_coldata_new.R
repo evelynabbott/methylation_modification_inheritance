@@ -1,6 +1,7 @@
 ########################################
 ##### make standard naming system ######
 ########################################
+
 library(DESeq2)
 library(tidyverse)
 library(ggplot2)
@@ -152,7 +153,10 @@ coldata <- coldata[order(coldata$samplenumber, decreasing = FALSE),]
 
 save(counts,coldata,file="all_samps_counts_coldata.Rdata")
 
-#keep "moderate" samples ---------------------------------------
+############################################
+## DESeq, PCA, outlier detection/removal ##
+############################################
+
 rm(list=ls())
 load("all_samps_counts_coldata.Rdata")
 #rownames(coldata) = coldata$samplenumber
@@ -184,7 +188,7 @@ coldata$countnum=colSums(counts)
 #                               ifelse(grepl("singlelarvae",coldata$samtype,ignore.case = T),"green","blue")))
 
 
-
+#OPTIONAL: color the samples which looked strange on sample clustering 
 coldata$color = ifelse(coldata$samplenumber == "27" |
                          coldata$samplenumber == "58" |
                          coldata$samplenumber == "13" |
@@ -213,7 +217,7 @@ plot(scores[,axes2plot],col=col,pch=19,main="",sub="",cex=1.5)
 ordispider(scores[,axes2plot],lab,label=T,col="grey70",cex=1.5)
 
 
-#plot with ggplot
+#plot figure 1 with ggplot
 sc1=data.frame(scores(dds.pcoa,scaling=1,choices=c(1:2))$sites)
 
 sc1=cbind(sc1,coldata)
@@ -309,8 +313,12 @@ coldata = coldata[, -which(names(coldata) %in% c("color"))]
 
 save(counts,coldata,file="all_samps_counts_coldata.Rdata")
 
-#-------------------------
+#############################################
 # MAKE DATAFRAME FOR JUST ADULTS AND LARVAE #
+#############################################
+
+#sperm and single larvae only have 1 genotype so they are omitted from the rest of this study
+
 rm(list=ls())
 load("all_samps_counts_coldata.Rdata")
 
